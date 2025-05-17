@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthHub - Modern Doctor Appointment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        .navbar {
+            padding: 15px 0;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            padding: 8px 15px !important;
+            border-radius: 8px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn-outline-light {
+            border-width: 2px;
+            font-weight: 500;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(67, 97, 238, 0.85), rgba(63, 55, 201, 0.85)), url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            padding: 120px 0;
+            position: relative;
+        }
+        
+        .hero-section h1 {
+            font-weight: 700;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero-section .lead {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .search-card {
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: none;
+            overflow: hidden;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .search-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-card .card-body {
+            padding: 25px;
+        }
+        
+        .form-select, .btn-search {
+            height: 50px;
+            border-radius: 8px !important;
+        }
+        
+        .btn-search {
+            background-color: var(--warning);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-search:hover {
+            background-color: #d91a6d;
+        }
+        
+        /* Featured Doctors */
+        .section-title {
+            position: relative;
+            margin-bottom: 50px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .doctor-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .doctor-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .doctor-card .card-img-top {
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .doctor-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+        
+        .doctor-card .card-body {
+            padding: 25px;
+        }
+        
+        .specialty-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+        }
+        
+        .rating {
+            color: #FFD700;
+        }
+        
+        .btn-view, .btn-book {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-view {
+            background-color: var(--primary);
+            border: none;
+        }
+        
+        .btn-book {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+        
+        .btn-view:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-book:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            background-color: #f9fafc;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .how-it-works:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.03;
+        }
+        
+        .step-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 80px 0;
+        }
+        
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .testimonial-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 15px;
+        }
+        
+        /* Stats */
+        .stats {
+            padding: 60px 0;
+            background-color: var(--light);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #2a2d3e, #1a1a2e);
+            color: white;
+            padding: 60px 0 0;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .footer-links h5 {
+            font-weight: 600;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-links h5:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links ul li a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-2 {
+            animation-delay: 0.4s;
+        }
+        
+        .delay-3 {
+            animation-delay: 0.6s;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 80px 0;
+                background-attachment: scroll;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title:after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* New Features */
+        .floating-action-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--warning), #d91a6d);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(247, 37, 133, 0.4);
+            z-index: 100;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .floating-action-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 8px 25px rgba(247, 37, 133, 0.5);
+        }
+        
+        .emergency-banner {
+            background: linear-gradient(135deg, #f72585, #d91a6d);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .emergency-banner a {
+            color: white;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        
+        .live-chat-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: white;
+            color: var(--primary);
+            border-radius: 30px;
+            padding: 12px 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .live-chat-btn i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .live-chat-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        /* Video Consultation Badge */
+        .video-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Emergency Banner -->
+    <div class="emergency-banner">
+        <div class="container">
+            <i class="fas fa-phone-alt me-2"></i> Need urgent care? <a href="#">Call our 24/7 emergency hotline at (555) 911-9111</a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-heartbeat"></i> HealthHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="clients interface N.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nprofile.html">Doctors</a>
+                    </li>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h1 class="animate">Find & Book Appointment With Your Ideal Doctor</h1>
+                    <p class="lead animate delay-1">Access to 1,000+ healthcare providers at your fingertips with both in-person and virtual consultation options</p>
+                    
+                    <div class="row justify-content-center animate delay-2">
+                        <div class="col-md-10">
+                            <div class="search-card">
+                                <div class="card-body">
+                                    <form>
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <select class="form-select">
+                                                    <option selected>Select Specialty</option>
+                                                    <option>Cardiology</option>
+                                                    <option>Dermatology</option>
+                                                    <option>Neurology</option>
+                                                    <option>Pediatrics</option>
+                                                    <option>Orthopedics</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-select">
+                                                    <option selected>Select Location</option>
+                                                    <option>New York</option>
+                                                    <option>Los Angeles</option>
+                                                    <option>Chicago</option>
+                                                    <option>Houston</option>
+                                                    <option>Phoenix</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-select">
+                                                    <option selected>Consultation Type</option>
+                                                    <option>In-Person</option>
+                                                    <option>Video Consultation</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="submit" class="btn btn-search w-100">
+                                                    <i class="fas fa-search me-1"></i> Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Doctors -->
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h2 class="section-title">Our Featured Doctors</h2>
+                <a href="#" class="btn btn-outline-primary">View All <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+            
+            <div class="row">
+                <!-- Doctor 1 -->
+                <div class="col-md-4 animate">
+                    <div class="doctor-card card">
+                        <div class="video-badge">
+                            <i class="fas fa-video me-1"></i> Video Available
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" class="card-img-top" alt="Dr. Sarah Johnson">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">Dr. Sarah Johnson</h5>
+                                    <p class="text-muted mb-1">New York Medical Center</p>
+                                </div>
+                                <span class="specialty-badge">Cardiology</span>
+                            </div>
+                            <div class="rating my-3">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="ms-1">4.7 (128 reviews)</span>
+                            </div>
+                            <p class="card-text">Board certified cardiologist with 15 years of experience in heart care and preventive cardiology.</p>
+                            <div class="d-flex mt-4">
+                                <a href="nprofile.html" class="btn btn-view me-2">
+                                    <i class="fas fa-user-md me-1"></i> View Profile
+                                </a>
+                                <a href="booking.html" class="btn btn-book">
+                                    <i class="fas fa-calendar-check me-1"></i> Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor 2 -->
+                <div class="col-md-4 animate delay-1">
+                    <div class="doctor-card card">
+                        <div class="video-badge">
+                            <i class="fas fa-video me-1"></i> Video Available
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80" class="card-img-top" alt="Dr. Michael Chen">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">Dr. Michael Chen</h5>
+                                    <p class="text-muted mb-1">Los Angeles Neuro Center</p>
+                                </div>
+                                <span class="specialty-badge">Neurology</span>
+                            </div>
+                            <div class="rating my-3">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span class="ms-1">4.3 (92 reviews)</span>
+                            </div>
+                            <p class="card-text">Specialized in neurological disorders with a patient-centered approach and cutting-edge treatments.</p>
+                            <div class="d-flex mt-4">
+                                <a href="doctor-profile.html" class="btn btn-view me-2">
+                                    <i class="fas fa-user-md me-1"></i> View Profile
+                                </a>
+                                <a href="booking.html" class="btn btn-book">
+                                    <i class="fas fa-calendar-check me-1"></i> Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor 3 -->
+                <div class="col-md-4 animate delay-2">
+                    <div class="doctor-card card">
+                        <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" class="card-img-top" alt="Dr. Emily Wilson">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">Dr. Emily Wilson</h5>
+                                    <p class="text-muted mb-1">Chicago Children's Hospital</p>
+                                </div>
+                                <span class="specialty-badge">Pediatrics</span>
+                            </div>
+                            <div class="rating my-3">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span class="ms-1">4.9 (215 reviews)</span>
+                            </div>
+                            <p class="card-text">Caring pediatrician with special focus on childhood development and preventive healthcare.</p>
+                            <div class="d-flex mt-4">
+                                <a href="doctor-profile.html" class="btn btn-view me-2">
+                                    <i class="fas fa-user-md me-1"></i> View Profile
+                                </a>
+                                <a href="booking.html" class="btn btn-book">
+                                    <i class="fas fa-calendar-check me-1"></i> Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">1,250+</div>
+                        <div class="stat-label">Qualified Doctors</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">50,000+</div>
+                        <div class="stat-label">Happy Patients</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Emergency Service</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Patient Satisfaction</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works py-5">
+        <div class="container">
+            <h2 class="section-title text-center">How It Works</h2>
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="step-card">
+                        <div class="step-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h4 class="text-center">1. Find a Doctor</h4>
+                        <p class="text-center">Search by specialty, location, or doctor name to find the right healthcare provider for your needs.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="step-card">
+                        <div class="step-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h4 class="text-center">2. Book Appointment</h4>
+                        <p class="text-center">Select available time slot that works for you and confirm your appointment instantly.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="step-card">
+                        <div class="step-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h4 class="text-center">3. Visit Doctor</h4>
+                        <p class="text-center">Receive confirmation and visit the doctor at the scheduled time or connect virtually.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title text-center text-white">What Our Patients Say</h2>
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" class="testimonial-img mx-auto d-block" alt="Patient">
+                        <div class="rating text-center mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-center mb-4">"HealthHub made finding a specialist so easy. I was able to book a same-day video consultation when I was feeling unwell."</p>
+                        <h5 class="text-center">Sarah Johnson</h5>
+                        <p class="text-center text-white-50">New York</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" class="testimonial-img mx-auto d-block" alt="Patient">
+                        <div class="rating text-center mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="text-center mb-4">"The doctors on HealthHub are top-notch. I found a cardiologist who took the time to explain everything to me."</p>
+                        <h5 class="text-center">Michael Chen</h5>
+                        <p class="text-center text-white-50">Los Angeles</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="testimonial-img mx-auto d-block" alt="Patient">
+                        <div class="rating text-center mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-center mb-4">"As a busy mom, I love the convenience of telehealth appointments. Dr. Wilson is amazing with my kids!"</p>
+                        <h5 class="text-center">Emily Wilson</h5>
+                        <p class="text-center text-white-50">Chicago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3 class="mb-3">Ready to take control of your health?</h3>
+                    <p class="mb-md-0">Join thousands of happy patients who found their ideal healthcare provider through HealthHub.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="#" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-user-plus me-2"></i> Sign Up Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5">
+                    <a href="#" class="footer-logo">
+                        <i class="fas fa-heartbeat me-2"></i> HealthHub
+                    </a>
+                    <p>Connecting patients with healthcare providers seamlessly since 2015. Our mission is to make healthcare accessible to everyone.</p>
+                    <div class="social-icons mt-4">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-5">
+                    <div class="footer-links">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Services</a></li>
+                            <li><a href="#">Doctors</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 mb-5">
+                    <div class="footer-links">
+                        <h5>Services</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Primary Care</a></li>
+                            <li><a href="#">Specialist Care</a></li>
+                            <li><a href="#">Emergency Care</a></li>
+                            <li><a href="#">Telemedicine</a></li>
+                            <li><a href="#">Health Checkups</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 mb-5">
+                    <div class="footer-links">
+                        <h5>Contact Us</h5>
+                        <address>
+                            <p><i class="fas fa-map-marker-alt me-2"></i> 123 Medical Drive, Suite 100<br>New York, NY 10001</p>
+                            <p><i class="fas fa-phone me-2"></i> (555) 123-4567</p>
+                            <p><i class="fas fa-envelope me-2"></i> info@healthhub.com</p>
+                            <p><i class="fas fa-clock me-2"></i> Mon-Fri: 8AM-8PM<br>Sat-Sun: 9AM-5PM</p>
+                        </address>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-md-0">&copy; 2023 HealthHub </P>
+</HTML>

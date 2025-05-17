@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Hub - Pharmacy Registration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .floating-label {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      color: #6c757d;
+      transition: all 0.3s;
+      pointer-events: none;
+      background: white;
+      padding: 0 5px;
+    }
+    input:focus + .floating-label,
+    input:not(:placeholder-shown) + .floating-label,
+    select:focus + .floating-label,
+    select:not(:placeholder-shown) + .floating-label {
+      top: -10px;
+      left: 10px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+    input, select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+    button:hover {
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #6c757d;
+    }
+    .login-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+      color: #6c757d;
+    }
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 38px;
+      color: #6c757d;
+      pointer-events: none;
+    }
+    .phone-input {
+      display: flex;
+    }
+    .phone-prefix {
+      width: 60px;
+      padding: 15px;
+      border: 2px solid #e9ecef;
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      background: #f8f9fa;
+      text-align: center;
+    }
+    .phone-input input {
+      border-radius: 0 8px 8px 0;
+      padding-left: 10px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Pharmacy Registration</h2>
+    <p style="text-align: center; color: #6c757d; margin-bottom: 1.5rem;">Register your pharmacy business</p>
+    <form id="pharmacySignupForm">
+      <div class="form-group">
+        <input type="text" id="pharmacyName" placeholder=" " required>
+        <label class="floating-label">Pharmacy Name</label>
+        <i class="fas fa-clinic-medical input-icon"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="text" id="ownerName" placeholder=" " required>
+        <label class="floating-label">Owner/Manager Name</label>
+        <i class="fas fa-user input-icon"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="email" id="email" placeholder=" " required>
+        <label class="floating-label">Email</label>
+        <i class="fas fa-envelope input-icon"></i>
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <div class="phone-input">
+          <div class="phone-prefix">+91</div>
+          <input type="tel" id="phone" placeholder="9876543210" required>
+        </div>
+        <i class="fas fa-phone input-icon" style="top: 53px;"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="text" id="address" placeholder=" " required>
+        <label class="floating-label">Full Address</label>
+        <i class="fas fa-map-marker-alt input-icon"></i>
+      </div>
+
+      <div style="display: flex; gap: 15px;">
+        <div class="form-group" style="flex: 1;">
+          <select id="state" placeholder=" " required>
+            <option value="" disabled selected></option>
+            <option>Delhi</option>
+            <option>Maharashtra</option>
+            <option>Karnataka</option>
+            <option>Tamil Nadu</option>
+          </select>
+          <label class="floating-label">State</label>
+          <i class="fas fa-map input-icon"></i>
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <input type="text" id="city" placeholder=" " required>
+          <label class="floating-label">City</label>
+          <i class="fas fa-city input-icon"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input type="text" id="license" placeholder=" " required>
+        <label class="floating-label">Drug License No.</label>
+        <i class="fas fa-id-card input-icon"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="text" id="gstin" placeholder=" ">
+        <label class="floating-label">GSTIN (Optional)</label>
+        <i class="fas fa-file-invoice input-icon"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="password" id="password" placeholder=" " required>
+        <label class="floating-label">Password</label>
+        <i class="fas fa-lock input-icon"></i>
+        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+      </div>
+
+      <button type="submit">
+        <i class="fas fa-user-plus" style="margin-right: 8px;"></i>Register Pharmacy
+      </button>
+    </form>
+
+    <div class="login-link">
+      Already registered? <a href="pharma login.html">Sign in here</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('pharmacySignupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const phone = document.getElementById('phone').value;
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        alert('Please enter a valid 10-digit Indian phone number!');
+        return;
+      }
+      alert('Registration successful! Redirecting...');
+      window.location.href = 'pharmacy-dashboard.html';
+    });
+
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+  </script>
+</body>
+</html>

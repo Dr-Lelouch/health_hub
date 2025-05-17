@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthHub - Doctor Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Indian-inspired color palette */
+            --primary: #138D75;  /* Ayurvedic green */
+            --primary-dark: #0E6655;
+            --accent: #F39C12;   /* Saffron accent */
+            --accent-light: #F8C471;
+            --light: #F8F9F9;
+            --dark: #2C3E50;
+            --text: #34495E;
+            --gray: #7F8C8D;
+            --danger: #E74C3C;
+            --success: #27AE60;
+            
+            /* Spacing */
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            
+            /* Border radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl) 0;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 var(--space-lg) var(--space-xl);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo i {
+            font-size: 2rem;
+            margin-right: var(--space-sm);
+            color: var(--accent);
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .user-info {
+            text-align: center;
+            padding: var(--space-xl) var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info img {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 3px solid var(--accent);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .user-info img:hover {
+            transform: scale(1.05);
+        }
+
+        .user-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: var(--space-sm);
+            font-weight: 500;
+        }
+
+        .user-info p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.85);
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-full);
+            display: inline-block;
+            margin-bottom: var(--space-md);
+        }
+
+        .nav-menu {
+            padding: var(--space-lg) 0;
+        }
+
+        .nav-item {
+            padding: var(--space-md) var(--space-xl);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            margin: var(--space-sm) 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--accent);
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--accent);
+            color: white;
+        }
+
+        .nav-item i {
+            margin-right: var(--space-md);
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: var(--space-xl);
+            overflow-y: auto;
+            background-color: #f5f7fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .page-title h2 {
+            font-size: 1.75rem;
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .page-title p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: var(--radius-full);
+            border: 1px solid #ddd;
+            width: 220px;
+            outline: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-bar input:focus {
+            border-color: var(--accent);
+            width: 280px;
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .notification {
+            position: relative;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+        }
+
+        .notification:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .notification i {
+            font-size: 1.3rem;
+            color: var(--gray);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: var(--radius-full);
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 2px solid #f5f7fa;
+        }
+
+        /* Profile Edit Form Styles */
+        .profile-edit-container {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-xl);
+            transition: var(--transition);
+            border-top: 4px solid var(--primary);
+        }
+
+        .profile-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .profile-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: var(--space-sm);
+        }
+
+        .profile-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: var(--radius-sm);
+        }
+
+        .profile-avatar {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+            position: relative;
+        }
+
+        .profile-avatar img {
+            width: 150px;
+            height: 150px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 4px solid var(--accent);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+
+        .profile-avatar img:hover {
+            transform: scale(1.03);
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 15px;
+            right: calc(50% - 75px);
+            background-color: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .avatar-upload:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .avatar-upload i {
+            font-size: 1.1rem;
+        }
+
+        .avatar-upload input {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: #f9f9f9;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+            background-color: white;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px 12px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn i {
+            margin-right: var(--space-sm);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--gray);
+            color: var(--dark);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+        }
+
+        /* Loading state */
+        .btn-loading .btn-text {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 3px solid transparent;
+            border-top-color: white;
+            border-radius: var(--radius-full);
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .profile-edit-container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 80px 1fr;
+            }
+            
+            .logo h1, .user-info h3, .user-info p, .nav-item span {
+                display: none;
+            }
+            
+            .logo {
+                justify-content: center;
+                padding: 0 0 var(--space-xl) 0;
+            }
+            
+            .logo i {
+                margin-right: 0;
+                font-size: 1.8rem;
+            }
+            
+            .user-info {
+                padding: var(--space-xl) 0;
+            }
+            
+            .user-info img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: var(--space-md) 0;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                font-size: 1.3rem;
+            }
+            
+            .search-bar input {
+                width: 180px;
+            }
+            
+            .search-bar input:focus {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-actions {
+                margin-top: var(--space-md);
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-bar {
+                flex-grow: 1;
+            }
+            
+            .search-bar input {
+                width: 100%;
+            }
+            
+            .search-bar input:focus {
+                width: 100%;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+            
+            .profile-avatar img {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .action-buttons {
+                flex-direction: column-reverse;
+                gap: var(--space-md);
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--space-lg);
+            }
+            
+            .profile-card {
+                padding: var(--space-lg);
+            }
+            
+            .profile-avatar img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .form-control {
+                padding: 0.7rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>HealthHub</h1>
+            </div>
+            
+            <div class="user-info">
+                <img src="https://media.istockphoto.com/id/1080237358/photo/indian-male-doctor-on-blue-background-stock-image.jpg?s=612x612&w=0&k=20&c=584Xv0Nsqtxl1wGVGjDH7aunkBDWguG3nyR3sxEh4tU=" alt="Doctor">
+                <h3>Dr. Rajesh Sharma</h3>
+                <p>Cardiologist</p>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <a href="doctors interface.html" style="text-decoration: none; color: inherit;"><span>Dashboard</span></a>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-user-injured"></i>
+                    <a href="new doctors.html" style="text-decoration: none; color: inherit;"><span>Patients</span></a>
+                </div>
+                <div class="nav-item active">
+                    <i class="fas fa-user-edit"></i>
+                    <span>Edit Profile</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="page-title">
+                    <h2>Edit Profile</h2>
+                    <p>Update your personal and professional information</p>
+                </div>
+                
+                <div class="user-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">5</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-edit-container">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-title">Personal Information</div>
+                    </div>
+                    
+                    <div class="profile-avatar">
+                        <img src="https://media.istockphoto.com/id/1080237358/photo/indian-male-doctor-on-blue-background-stock-image.jpg?s=612x612&w=0&k=20&c=584Xv0Nsqtxl1wGVGjDH7aunkBDWguG3nyR3sxEh4tU=" alt="Doctor" id="profileImage">
+                        <label class="avatar-upload" for="avatarInput">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" id="avatarInput" accept="image/*">
+                        </label>
+                    </div>
+                    
+                    <form id="profileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" id="firstName" class="form-control" value="Rajesh">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" id="lastName" class="form-control" value="Sharma">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" id="email" class="form-control" value="dr.rajesh.sharma@aarogyaseva.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" id="phone" class="form-control" value="+91 98765 43210">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" id="address" class="form-control" value="204, Medanta Hospital, Sector 38">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" id="city" class="form-control" value="Gurugram">
+                            </div>
+                            <div class="form-group">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" id="state" class="form-control" value="Haryana">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="zipCode" class="form-label">PIN Code</label>
+                                <input type="text" id="zipCode" class="form-control" value="122001">
+                            </div>
+                            <div class="form-group">
+                                <label for="country" class="form-label">Country</label>
+                                <select id="country" class="form-control form-select">
+                                    <option value="IN" selected>India</option>
+                                    <option value="US">United States</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-title">Professional Information</div>
+                    </div>
+                    
+                    <form id="professionalForm">
+                        <div class="form-group">
+                            <label for="specialization" class="form-label">Specialization</label>
+                            <select id="specialization" class="form-control form-select">
+                                <option value="cardiology" selected>Cardiology</option>
+                                <option value="neurology">Neurology</option>
+                                <option value="pediatrics">Pediatrics</option>
+                                <option value="orthopedics">Orthopedics</option>
+                                <option value="ayurveda">Ayurveda</option>
+                                <option value="homeopathy">Homeopathy</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="licenseNumber" class="form-label">Medical License Number</label>
+                                <input type="text" id="licenseNumber" class="form-control" value="MCI-9876543">
+                            </div>
+                            <div class="form-group">
+                                <label for="yearsExperience" class="form-label">Years of Experience</label>
+                                <input type="number" id="yearsExperience" class="form-control" value="18">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="education" class="form-label">Education</label>
+                            <textarea id="education" class="form-control form-textarea">All India Institute of Medical Sciences (AIIMS), New Delhi - MD
+Post Graduate Institute of Medical Education and Research (PGIMER), Chandigarh - DM Cardiology</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="biography" class="form-label">Professional Biography</label>
+                            <textarea id="biography" class="form-control form-textarea">Dr. Rajesh Sharma is a renowned cardiologist with over 18 years of experience in interventional cardiology. He has performed more than 5,000 successful angioplasties and is a pioneer in minimally invasive cardiac procedures in India. Dr. Sharma completed his DM Cardiology from PGIMER Chandigarh and has trained at leading cardiac centers in the US. He is committed to providing affordable and accessible cardiac care to patients across India.</textarea>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-outline" id="cancelButton">
+                                <i class="fas fa-times"></i>
+                                <span class="btn-text">Cancel</span>
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="saveButton">
+                                <i class="fas fa-save"></i>
+                                <span class="btn-text">Save Changes</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Optimized event listeners with delegation
+        document.addEventListener('click', function(e) {
+            // Handle nav items
+            if (e.target.closest('.nav-item')) {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => item.classList.remove('active'));
+                e.target.closest('.nav-item').classList.add('active');
+            }
+            
+            // Handle notification click
+            if (e.target.closest('.notification')) {
+                alert('You have 5 new notifications');
+                document.querySelector('.notification-badge').style.display = 'none';
+            }
+            
+            // Handle cancel button
+            if (e.target.closest('#cancelButton')) {
+                if (confirm('Are you sure you want to discard your changes?')) {
+                    window.location.href = 'doctors interface.html';
+                }
+            }
+        });
+
+        // Avatar upload preview with optimized FileReader
+        const avatarInput = document.getElementById('avatarInput');
+        const profileImage = document.getElementById('profileImage');
+        
+        if (avatarInput && profileImage) {
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Create a blob URL for instant preview
+                    const blobUrl = URL.createObjectURL(file);
+                    profileImage.src = blobUrl;
+                    
+                    // Read file for permanent storage (if needed)
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        // If you need the base64 version for saving
+                        profileImage.dataset.base64 = event.target.result;
+                        URL.revokeObjectURL(blobUrl); // Clean up blob URL
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Optimized form submission with loading state
+        const professionalForm = document.getElementById('professionalForm');
+        const saveButton = document.getElementById('saveButton');
+        
+        if (professionalForm && saveButton) {
+            professionalForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                saveButton.classList.add('btn-loading');
+                saveButton.disabled = true;
+                
+                try {
+                    // Simulate network request with timeout
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Show success message
+                    alert('Profile updated successfully!');
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to update profile. Please try again.');
+                } finally {
+                    // Reset button state
+                    saveButton.classList.remove('btn-loading');
+                    saveButton.disabled = false;
+                }
+            });
+        }
+
+        // Debounce search input for better performance
+        const searchInput = document.querySelector('.search-bar input');
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    // Perform search operation here
+                    console.log('Searching for:', this.value);
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>

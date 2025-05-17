@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Hub - Sign Up</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .floating-label {
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      color: #6c757d;
+      transition: all 0.3s;
+      pointer-events: none;
+      background: white;
+      padding: 0 5px;
+    }
+    input:focus + .floating-label,
+    input:not(:placeholder-shown) + .floating-label {
+      top: -10px;
+      left: 10px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    input:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+    button:hover {
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #6c757d;
+    }
+    .login-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+      color: #6c757d;
+    }
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+    .required:after {
+      content: " *";
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Create Account</h2>
+    <p style="text-align: center; color: #6c757d; margin-bottom: 1.5rem;">Join Health Hub today</p>
+    <form id="signupForm">
+      <div class="form-group">
+        <input type="email" id="signupEmail" placeholder=" " required>
+        <label class="floating-label required">Email</label>
+      </div>
+      <div class="form-group">
+        <input type="tel" id="signupPhone" placeholder=" " required>
+        <label class="floating-label required">Phone Number</label>
+      </div>
+      <div class="form-group">
+        <input type="password" id="signupPassword" placeholder=" " required>
+        <label class="floating-label required">Password</label>
+        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+      </div>
+      <button type="submit"><i class="fas fa-user-plus" style="margin-right: 8px;"></i> Sign Up</button>
+    </form>
+    <div class="login-link">
+      Already have an account? <a href="nlogin.html">Sign in</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('signupEmail').value;
+      const phone = document.getElementById('signupPhone').value;
+      const password = document.getElementById('signupPassword').value;
+      
+      if (email && phone && password) {
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userPhone', phone);
+        window.location.href = 'chomepage.html';
+      } else {
+        alert('Please fill in all fields');
+      }
+    });
+
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('signupPassword');
+
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+  </script>
+</body>
+</html>

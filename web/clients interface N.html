@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HealthHub Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    #app-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    main {
+      flex: 1;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-[Poppins] transition duration-300">
+  <div id="app-container">
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-400 shadow-lg p-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fas fa-heartbeat text-white text-2xl"></i>
+        <h1 class="text-2xl font-bold text-white">HealthHub</h1>
+      </div>
+      <div class="space-x-4 hidden md:flex">
+        <a href="index.html" class="text-white hover:text-blue-100 transition flex items-center">
+          <i class="fas fa-home mr-1"></i> Home
+        </a>
+        <a href="clients interface N.html" class="text-white bg-blue-700 px-3 py-1 rounded-lg hover:bg-blue-800 transition flex items-center">
+          <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+        </a>
+        <a href="medication.html" class="text-white hover:text-blue-100 transition flex items-center">
+          <i class="fas fa-pills mr-1"></i> Medications
+        </a>
+        <a href="APPOINTMENT.HTML" class="text-white hover:text-blue-100 transition flex items-center">APPOINTMENTS</a>
+        <a href="sympton.html" class="text-white hover:text-blue-100 transition flex items-center">
+          <i class="fas fa-stethoscope mr-1"></i> Symptom Checker
+        </a>
+        <a href="CPROFILE.html" class="text-white hover:text-blue-100 transition flex items-center">
+          <i class="fas fa-user-circle mr-1"></i> Profile
+        </a>
+      </div>
+      <button id="toggleTheme" class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition flex items-center">
+        <i class="fas fa-moon mr-2"></i> Toggle Theme
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-6 max-w-7xl mx-auto space-y-8">
+
+      <!-- Welcome Message with User Info -->
+      <section class="bg-gradient-to-r from-blue-500 to-blue-400 p-6 rounded-2xl shadow-lg text-white">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h2 class="text-3xl font-bold animate-fadeIn">Welcome Back, <span class="text-yellow-300">Rajesh</span>!</h2>
+            <p class="text-lg opacity-90 animate-fadeIn delay-200">Here's your health snapshot for today, May 16, 2025</p>
+          </div>
+          <div class="mt-4 md:mt-0 flex items-center space-x-4">
+            <div class="text-center bg-blue-600 p-3 rounded-xl">
+              <p class="text-sm">Current Heart Rate</p>
+              <p class="text-2xl font-bold">72 <span class="text-sm">bpm</span></p>
+            </div>
+            <div class="text-center bg-blue-600 p-3 rounded-xl">
+              <p class="text-sm">Today's Steps</p>
+              <p class="text-2xl font-bold">3,842 <span class="text-sm">steps</span></p>
+            </div>
+            <div class="text-center bg-blue-600 p-3 rounded-xl">
+              <p class="text-sm">Water Intake</p>
+              <p class="text-2xl font-bold">5 <span class="text-sm">glasses</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Daily Quote and Tip -->
+      <section class="grid md:grid-cols-2 gap-6">
+        <div id="quoteBox" class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg animate-slideInLeft relative overflow-hidden">
+          <div class="absolute top-4 right-4 text-white opacity-20 text-6xl">
+            <i class="fas fa-quote-right"></i>
+          </div>
+          <i class="fas fa-quote-left text-2xl mb-4 text-white opacity-70"></i>
+          <p id="quoteText" class="text-xl italic font-medium mb-4"></p>
+          <p id="quoteAuthor" class="text-right text-sm font-light opacity-80"></p>
+        </div>
+        <div id="tipBox" class="bg-gradient-to-br from-green-500 to-teal-500 text-white p-6 rounded-2xl shadow-lg animate-slideInRight relative overflow-hidden">
+          <div class="absolute top-4 right-4 text-white opacity-20 text-6xl">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <div class="flex items-start">
+            <i class="fas fa-lightbulb text-2xl mr-4 mt-1 text-yellow-300"></i>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Daily Health Tip</h3>
+              <p id="tipText" class="text-lg"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upcoming Appointments -->
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+            <i class="fas fa-calendar-alt text-blue-500 mr-3"></i> Upcoming Appointments
+          </h2>
+          <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:shadow-md transition flex items-center">
+            <i class="fas fa-plus mr-2"></i> New Appointment
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr class="hover:bg-blue-50 transition">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <i class="fas fa-user-md text-blue-500"></i>
+                    </div>
+                    <div class="ml-4">
+                      <div class="font-medium">Dr. Sushila Kataria</div>
+                      <div class="text-sm text-gray-500">General Physician</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div>Tomorrow, May 18</div>
+                  <div class="text-sm text-gray-500">10:30 AM</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Checkup</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Confirmed
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                  <button class="text-blue-600 hover:text-blue-900 flex items-center">
+                    <i class="fas fa-calendar-edit mr-1"></i> Reschedule
+                  </button>
+                  <button class="text-red-600 hover:text-red-900 flex items-center">
+                    <i class="fas fa-times-circle mr-1"></i> Cancel
+                  </button>
+                </td>
+              </tr>
+              <tr class="hover:bg-blue-50 transition">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <i class="fas fa-heartbeat text-blue-500"></i>
+                    </div>
+                    <div class="ml-4">
+                      <div class="font-medium">Dr. Subash Chandra</div>
+                      <div class="text-sm text-gray-500">Cardiologist</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div>May 21, 2025</div>
+                  <div class="text-sm text-gray-500">2:15 PM</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">Consultation</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Pending
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                  <button class="text-blue-600 hover:text-blue-900 flex items-center">
+                    <i class="fas fa-calendar-edit mr-1"></i> Reschedule
+                  </button>
+                  <button class="text-red-600 hover:text-red-900 flex items-center">
+                    <i class="fas fa-times-circle mr-1"></i> Cancel
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Symptom Checker -->
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+            <i class="fas fa-stethoscope text-blue-500 mr-3"></i> Symptom Checker
+          </h2>
+          <a href="sympton.html" class="text-blue-500 hover:text-blue-700 flex items-center">
+            <i class="fas fa-history mr-2"></i> Symptom History
+          </a>
+        </div>
+        
+        <p class="mb-6 text-gray-600">Select your symptoms to get personalized health recommendations</p>
+        
+        <h3 class="text-xl font-semibold mb-4 text-gray-700">Common Symptoms</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-blue-50 cursor-pointer transition border border-gray-100 hover:border-blue-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+              <i class="fas fa-head-side-virus text-blue-500"></i>
+            </div>
+            <span>Headache</span>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-red-50 cursor-pointer transition border border-gray-100 hover:border-red-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+              <i class="fas fa-temperature-high text-red-500"></i>
+            </div>
+            <span>Fever</span>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-green-50 cursor-pointer transition border border-gray-100 hover:border-green-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+              <i class="fas fa-lungs-virus text-green-500"></i>
+            </div>
+            <span>Cough</span>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-yellow-50 cursor-pointer transition border border-gray-100 hover:border-yellow-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
+              <i class="fas fa-comment-medical text-yellow-500"></i>
+            </div>
+            <span>Sore Throat</span>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-purple-50 cursor-pointer transition border border-gray-100 hover:border-purple-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+              <i class="fas fa-stomach text-purple-500"></i>
+            </div>
+            <span>Nausea</span>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-indigo-50 cursor-pointer transition border border-gray-100 hover:border-indigo-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
+              <i class="fas fa-tired text-indigo-500"></i>
+            </div>
+            <span>Fatigue</span>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-pink-50 cursor-pointer transition border border-gray-100 hover:border-pink-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center mr-3">
+              <i class="fas fa-dizzy text-pink-500"></i>
+            </div>
+            <span>Dizziness</span>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl hover:bg-red-50 cursor-pointer transition border border-gray-100 hover:border-red-200 hover:shadow-md flex items-center">
+            <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+              <i class="fas fa-heartbeat text-red-500"></i>
+            </div>
+            <span>Chest Pain</span>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <a href="sympton.html" class="inline-block">
+            <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300 shadow-lg transform hover:scale-105 flex items-center mx-auto">
+              <i class="fas fa-plus-circle mr-2"></i> Enter Your Symptoms
+            </button>
+          </a>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-center py-8">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-6">
+          <div>
+            <h3 class="text-lg font-bold mb-4">HealthHub</h3>
+            <p class="text-sm opacity-80">Your complete health management solution for a better, healthier life.</p>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">About Us</a></li>
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">Services</a></li>
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">Doctors</a></li>
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">Support</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">Help Center</a></li>
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">Privacy Policy</a></li>
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">Terms of Service</a></li>
+              <li><a href="#" class="text-sm opacity-80 hover:opacity-100">FAQs</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4">Connect With Us</h3>
+            <div class="flex justify-center space-x-4">
+              <a href="#" class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-700 transition">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="#" class="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center hover:bg-blue-600 transition">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#" class="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center hover:bg-pink-700 transition">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-800 transition">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-blue-400 pt-6">
+          <p class="text-sm opacity-80">© 2025 HealthHub. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.getElementById("toggleTheme").addEventListener("click", () => {
+      document.body.classList.toggle("bg-gray-900");
+      document.body.classList.toggle("text-white");
+      document.querySelectorAll(".text-gray-600, .text-gray-700, .text-gray-500").forEach(el => el.classList.toggle("text-gray-300"));
+      document.querySelectorAll(".bg-white").forEach(el => {
+        el.classList.toggle("bg-gray-800");
+        el.classList.toggle("border-gray-700");
+      });
+      document.querySelectorAll(".bg-gray-50").forEach(el => el.classList.toggle("bg-gray-700"));
+      document.querySelectorAll(".border-gray-100").forEach(el => el.classList.toggle("border-gray-600"));
+    });
+
+    const quotes = [
+      { text: "The greatest wealth is health.", author: "Virgil" },
+      { text: "Take care of your body. It's the only place you have to live.", author: "Jim Rohn" },
+      { text: "Health is not valued till sickness comes.", author: "Thomas Fuller" },
+      { text: "Happiness is the highest form of health.", author: "Dalai Lama" },
+      { text: "To keep the body in good health is a duty.", author: "Buddha" },
+      { text: "Your body hears everything your mind says.", author: "Naomi Judd" },
+      { text: "Self-care is how you take your power back.", author: "Lalah Delia" },
+      { text: "The first wealth is health.", author: "Ralph Waldo Emerson" }
+    ];
+
+    const tips = [
+      "Drink at least 8 glasses of water a day to stay hydrated and support all bodily functions.",
+      "Take a short 10-minute walk after meals to aid digestion and improve blood sugar levels.",
+      "Avoid screens 30 minutes before bed to improve sleep quality and fall asleep faster.",
+      "Start your day with 5 minutes of stretching to boost circulation and flexibility.",
+      "Incorporate more whole grains and leafy greens into your meals for better nutrition.",
+      "Practice deep breathing exercises for 5 minutes daily to reduce stress and anxiety.",
+      "Use the stairs instead of the elevator for short distances to increase daily activity.",
+      "Limit sugary drinks and processed foods to maintain stable energy levels throughout the day."
+    ];
+
+    const todayIndex = new Date().getDate() % quotes.length;
+    document.getElementById("quoteText").textContent = quotes[todayIndex].text;
+    document.getElementById("quoteAuthor").textContent = `— ${quotes[todayIndex].author}`;
+    document.getElementById("tipText").textContent = tips[todayIndex];
+
+    // Enhanced Charts with Gradient and Better Styling
+    const heartRateChart = new Chart(document.getElementById("heartRateChart"), {
+      type: "line",
+      data: {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        datasets: [{
+          label: "Heart Rate (bpm)",
+          data: [76, 78, 72, 75, 80, 77, 74],
+          borderColor: "#6366f1",
+          borderWidth: 3,
+          pointBackgroundColor: "#fff",
+          pointBorderColor: "#6366f1",
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          fill: true,
+          backgroundColor: context => {
+            const ctx = context.chart.ctx;
+            const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+            gradient.addColorStop(0, "rgba(99, 102, 241, 0.3)");
+            gradient.addColorStop(1, "rgba(99, 102, 241, 0)");
+            return gradient;
+          },
+          tension: 0.3
+        }]
+      },
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false,
+        plugins: { 
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 12 },
+            padding: 12,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return `Heart Rate: ${context.raw} bpm`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            min: 70,
+            max: 85,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+
+    const stepsChart = new Chart(document.getElementById("stepsChart"), {
+      type: "bar",
+      data: {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        datasets: [{
+          label: "Steps",
+          data: [4500, 7000, 6000, 8000, 7600, 9900, 7200],
+          backgroundColor: context => {
+            const value = context.dataset.data[context.dataIndex];
+            return value > 8000 ? '#10b981' : value > 6000 ? '#3b82f6' : '#ef4444';
+          },
+          borderRadius: 6,
+          borderSkipped: false
+        }]
+      },
+      options: { 
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 12 },
+            padding: 12,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return `Steps: ${context.raw.toLocaleString()}`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              callback: function(value) {
+                return value >= 1000 ? value/1000 + 'k' : value;
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+
+    // Add animation to symptom boxes on hover
+    document.querySelectorAll('.grid.gap-4 div, .grid.gap-3 div').forEach(box => {
+      box.addEventListener('mouseenter', () => {
+        box.classList.add('transform', 'scale-105');
+      });
+      box.addEventListener('mouseleave', () => {
+        box.classList.remove('transform', 'scale-105');
+      });
+    });
+  </script>
+
+  <!-- Animations -->
+  <style>
+    .animate-fadeIn {
+      animation: fadeIn 1s ease-out;
+    }
+    .animate-slideInLeft {
+      animation: slideInLeft 0.8s ease-out;
+    }
+    .animate-slideInRight {
+      animation: slideInRight 0.8s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .hover\:scale-105:hover {
+      transform: scale(1.05);
+    }
+    .transition {
+      transition-property: all;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 300ms;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Sarah Johnson | MediBook</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .doctor-header {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+        }
+        .review-card {
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        .rating {
+            color: #FFD700;
+        }
+        .tab-content {
+            padding: 30px 0;
+        }
+        .stat-card {
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation (same as index.html) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <!-- ... same nav as index.html ... -->
+    </nav>
+
+    <!-- Doctor Header -->
+    <section class="doctor-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <img src="doctor1.jpg" class="img-fluid rounded-circle mb-3" alt="Dr. Sarah Johnson" style="width: 150px; height: 150px; object-fit: cover;">
+                    <a href="booking.html" class="btn btn-primary w-100">Book Appointment</a>
+                </div>
+                <div class="col-md-7">
+                    <h1>Dr. Sarah Johnson, MD</h1>
+                    <p class="mb-1"><strong>Cardiologist</strong> | New York Medical Center</p>
+                    <div class="rating mb-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span class="ms-1">4.7 (128 reviews)</span>
+                    </div>
+                    <p class="mb-1"><i class="fas fa-map-marker-alt"></i> 123 Heart Lane, New York, NY 10001</p>
+                    <p class="mb-1"><i class="fas fa-phone"></i> (555) 987-6543</p>
+                    <p class="mb-0"><i class="fas fa-money-bill-wave"></i> $150 per consultation</p>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Next Available</h5>
+                            <p class="card-text">Tomorrow at 10:30 AM</p>
+                            <a href="booking.html" class="btn btn-primary">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-4">
+        <div class="container">
+            <ul class="nav nav-pills mb-4" id="doctorTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" type="button">Overview</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="experience-tab" data-bs-toggle="pill" data-bs-target="#experience" type="button">Experience</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="pill" data-bs-target="#reviews" type="button">Reviews</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="locations-tab" data-bs-toggle="pill" data-bs-target="#locations" type="button">Locations</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="doctorTabContent">
+                <!-- Overview Tab -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3>About Dr. Johnson</h3>
+                            <p>Dr. Sarah Johnson is a board-certified cardiologist with over 15 years of experience in diagnosing and treating heart conditions. She specializes in preventive cardiology, heart failure management, and non-invasive cardiac imaging.</p>
+                            <p>Dr. Johnson completed her medical degree at Harvard Medical School, followed by residency at Massachusetts General Hospital and fellowship in cardiology at Johns Hopkins Hospital. She is committed to providing personalized, compassionate care to all her patients.</p>
+                            
+                            <h3 class="mt-5">Specialties & Expertise</h3>
+                            <ul>
+                                <li>Preventive Cardiology</li>
+                                <li>Heart Failure Management</li>
+                                <li>Coronary Artery Disease</li>
+                                <li>Hypertension (High Blood Pressure)</li>
+                                <li>Cholesterol Management</li>
+                                <li>Echocardiography</li>
+                                <li>Stress Testing</li>
+                            </ul>
+                            
+                            <h3 class="mt-5">Education & Training</h3>
+                            <ul class="list-unstyled">
+                                <li><strong>Medical School:</strong> Harvard Medical School</li>
+                                <li><strong>Residency:</strong> Massachusetts General Hospital, Internal Medicine</li>
+                                <li><strong>Fellowship:</strong> Johns Hopkins Hospital, Cardiology</li>
+                                <li><strong>Board Certifications:</strong> American Board of Internal Medicine, Cardiovascular Disease</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stat-card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="stat-number">15+</div>
+                                    <div>Years Experience</div>
+                                </div>
+                            </div>
+                            <div class="card stat-card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="stat-number">5,000+</div>
+                                    <div>Patients Treated</div>
+                                </div>
+                            </div>
+                            <div class="card stat-card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="stat-number">98%</div>
+                                    <div>Patient Satisfaction</div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Languages Spoken</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><i class="fas fa-check text-primary me-2"></i> English (Fluent)</li>
+                                        <li><i class="fas fa-check text-primary me-2"></i> Spanish (Conversational)</li>
+                                        <li><i class="fas fa-check text-primary me-2"></i> French (Basic)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Insurance Accepted</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><i class="fas fa-check text-primary me-2"></i> Aetna</li>
+                                        <li><i class="fas fa-check text-primary me-2"></i> Blue Cross Blue Shield</li>
+                                        <li><i class="fas fa-check text-primary me-2"></i> Cigna</li>
+                                        <li><i class="fas fa-check text-primary me-2"></i> Medicare</li>
+                                        <li><i class="fas fa-check text-primary me-2"></i> UnitedHealthcare</li>
+                                        <li><i class="fas fa-check text-primary me-2"></i> And many more...</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Experience Tab -->
+                <div class="tab-pane fade" id="experience" role="tabpanel">
+                    <h3>Professional Experience</h3>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5>New York Medical Center</h5>
+                                <span class="text-muted">2015 - Present</span>
+                            </div>
+                            <p><strong>Senior Cardiologist</strong></p>
+                            <ul>
+                                <li>Lead the cardiology department with a team of 12 physicians</li>
+                                <li>Specialize in preventive cardiology and heart failure management</li>
+                                <li>Implemented new patient-centered care protocols</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5>Boston Heart Institute</h5>
+                                <span class="text-muted">2010 - 2015</span>
+                            </div>
+                            <p><strong>Cardiologist</strong></p>
+                            <ul>
+                                <li>Provided comprehensive cardiac care to patients</li>
+                                <li>Participated in clinical research trials</li>
+                                <li>Mentored medical students and residents</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5>Massachusetts General Hospital</h5>
+                                <span class="text-muted">2007 - 2010</span>
+                            </div>
+                            <p><strong>Resident Physician, Internal Medicine</strong></p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="mt-5">Professional Memberships</h3>
+                    <ul>
+                        <li>American College of Cardiology (Fellow)</li>
+                        <li>American Heart Association</li>
+                        <li>American Medical Association</li>
+                    </ul>
+                    
+                    <h3 class="mt-5">Publications & Research</h3>
+                    <ul>
+                        <li>"Long-term Outcomes of Preventive Cardiology Interventions" - Journal of Cardiology, 2021</li>
+                        <li>"Novel Approaches to Heart Failure Management" - American Heart Journal, 2019</li>
+                        <li>"Impact of Lifestyle Changes on Cardiovascular Health" - Circulation, 2017</li>
+                    </ul>
+                </div>
+                
+                <!-- Reviews Tab -->
+                <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Patient Reviews</h3>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                            <i class="fas fa-plus me-1"></i> Write a Review
+                        </button>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <div class="display-4">4.7</div>
+                            <div class="rating mb-2">
+                                <i class="fas fa-star"></i>
+                                <i class="fas

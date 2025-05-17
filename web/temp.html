@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hospital Locator - Find Nearby Medical Facilities</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet Routing Machine CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <!-- Leaflet Geocoder CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #map {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .search-bar {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 8px 15px;
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 350px;
+      z-index: 1000;
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 16px;
+      padding: 8px;
+      background: transparent;
+    }
+
+    .search-icon {
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .search-icon:hover {
+      opacity: 1;
+    }
+
+    .search-container {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      z-index: 1000;
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 350px;
+      max-height: 80vh;
+      overflow: hidden;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .options button {
+      padding: 8px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      background-color: #4a6bff;
+      color: white;
+      flex-grow: 1;
+      transition: all 0.2s;
+    }
+
+    .options button:hover {
+      background-color: #3a56e0;
+      transform: translateY(-1px);
+    }
+
+    .selected-info {
+      margin: 10px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .results {
+      margin-top: 10px;
+      max-height: calc(80vh - 180px);
+      overflow-y: auto;
+      text-align: left;
+      padding-right: 5px;
+    }
+
+    .result-card {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .result-card:hover {
+      background: #e9f0ff;
+      border-color: #c0d0ff;
+      transform: translateX(2px);
+    }
+
+    .result-card h4 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      color: #2c3e50;
+    }
+
+    .result-card p {
+      margin: 4px 0;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .distance {
+      color: #4a6bff;
+      font-weight: 600;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(74, 107, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #4a6bff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .location-btn {
+      background-color: #10ac84 !important;
+    }
+
+    .location-btn:hover {
+      background-color: #0d9c76 !important;
+    }
+
+    .clear-route-btn {
+      background-color: #e74c3c !important;
+    }
+
+    .clear-route-btn:hover {
+      background-color: #c0392b !important;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    /* Custom scrollbar */
+    .results::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .results::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .results::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    .results::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    /* Advanced features */
+    .filters {
+      margin: 10px 0;
+      padding: 10px;
+      background: #f5f7fa;
+      border-radius: 8px;
+    }
+
+    .filter-group {
+      margin-bottom: 8px;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #555;
+    }
+
+    .filter-group select, .filter-group input {
+      width: 100%;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      font-size: 13px;
+    }
+
+    .hospital-details {
+      display: none;
+      margin-top: 8px;
+      padding: 8px;
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .hospital-details.active {
+      display: block;
+    }
+
+    .hospital-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .hospital-meta span {
+      display: flex;
+      align-items: center;
+    }
+
+    .hospital-meta i {
+      margin-right: 4px;
+      color: #4a6bff;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .action-buttons button {
+      flex: 1;
+      padding: 6px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-buttons button:hover {
+      opacity: 0.9;
+    }
+
+    .directions-btn {
+      background-color: #4a6bff;
+      color: white;
+    }
+
+    .favorite-btn {
+      background-color: #ff6b6b;
+      color: white;
+    }
+
+    .favorite-btn.favorited {
+      background-color: #ff4757;
+    }
+
+    .rating {
+      color: #f39c12;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .emergency-icon {
+      color: #e74c3c;
+      margin-left: 5px;
+    }
+
+    .favorite-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #ff6b6b;
+      cursor: pointer;
+    }
+
+    /* Routing controls styling */
+    .leaflet-routing-container {
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+      max-height: 400px;
+      overflow-y: auto;
+      width: 300px;
+    }
+
+    .leaflet-routing-alt {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .leaflet-routing-geocoders input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .leaflet-routing-geocoders button {
+      background-color: #4a6bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .leaflet-routing-geocoders button:hover {
+      background-color: #3a56e0;
+    }
+
+    .leaflet-control-geocoder {
+      border-radius: 4px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+      background: white;
+    }
+
+    .leaflet-control-geocoder a {
+      border-bottom: none;
+    }
+
+    .leaflet-control-geocoder .leaflet-control-geocoder-form input {
+      width: 200px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .leaflet-control-geocoder-icon {
+      background-image: url('https://unpkg.com/leaflet-control-geocoder/dist/geocoder.png');
+      background-size: 24px 24px;
+    }
+
+    /* Back button styling */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: white;
+      padding: 8px 15px;
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .back-button:hover {
+      background: #f5f5f5;
+      transform: translateY(-1px);
+    }
+
+    .back-button i {
+      color: #4a6bff;
+    }
+
+    @media (max-width: 600px) {
+      .search-bar, .search-container {
+        width: calc(100% - 40px);
+        left: 10px;
+        right: 10px;
+      }
+      
+      .search-bar {
+        top: 10px;
+      }
+      
+      .search-container {
+        top: 70px;
+      }
+
+      .leaflet-routing-container {
+        width: 250px;
+      }
+
+      .back-button {
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search for hospitals, clinics..." aria-label="Search for hospitals" />
+    <img class="search-icon" src="https://img.icons8.com/ios-filled/50/000000/search--v1.png" alt="Search" onclick="triggerSearch()" />
+  </div>
+
+  <!-- Back button -->
+  <div class="back-button" onclick="goBack()">
+    <i class="fas fa-arrow-left"></i>
+    <span>Back</span>
+  </div>
+
+  <!-- Options and info -->
+  <div class="search-container">
+    <div class="options">
+      <button onclick="searchHospitals()"><i class="fas fa-hospital"></i> Hospitals</button>
+      <button onclick="searchClinics()"><i class="fas fa-clinic-medical"></i> Clinics</button>
+      <button onclick="searchPharmacies()"><i class="fas fa-prescription-bottle-alt"></i> Pharmacies</button>
+      <button onclick="getUserLocation()" class="location-btn"><i class="fas fa-location-arrow"></i> My Location</button>
+      <button onclick="clearRoute()" class="clear-route-btn"><i class="fas fa-times"></i> Clear Route</button>
+    </div>
+    
+    <div class="filters">
+      <div class="filter-group">
+        <label for="radius">Search Radius (km)</label>
+        <select id="radius">
+          <option value="2">2 km</option>
+          <option value="5" selected>5 km</option>
+          <option value="10">10 km</option>
+          <option value="20">20 km</option>
+          <option value="50">50 km</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="emergency">Emergency Services</label>
+        <select id="emergency">
+          <option value="all">All Facilities</option>
+          <option value="emergency">With Emergency Dept</option>
+          <option value="trauma">Trauma Centers</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="selected-info" id="selectedInfo">
+      Ready to search
+      <span id="loadingIndicator" class="loading" style="display: none;"></span>
+    </div>
+    <div class="results" id="resultsList"></div>
+  </div>
+
+  <!-- Map -->
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet Routing Machine -->
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  <!-- Leaflet Geocoder -->
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+  <script>
+    // Initialize map with default view
+    const map = L.map('map', { 
+      zoomControl: false,
+      preferCanvas: true // Better performance for many markers
+    }).setView([0, 0], 2);
+    
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
+
+    // Tile layer with a nicer looking map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Variables to store markers and user location
+    let markers = [];
+    let userLocationMarker = null;
+    let userLocation = null;
+    let lastSearchTime = 0;
+    const searchDelay = 1000; // 1 second delay between searches
+    let favorites = JSON.parse(localStorage.getItem('hospitalFavorites')) || [];
+    let routingControl = null;
+
+    // Sample hospital data (in a real app, this would come from an API)
+    const sampleHospitals = [
+      {
+        name: "City General Hospital",
+        lat: 51.505,
+        lng: -0.09,
+        address: "123 Medical Center Dr, London",
+        phone: "+44 20 7123 4567",
+        website: "www.citygeneralhospital.org",
+        emergency: true,
+        trauma: false,
+        specialties: ["Cardiology", "Pediatrics", "General Surgery"],
+        rating: 4.2,
+        distance: 1.5
+      },
+      {
+        name: "Metropolitan Medical Center",
+        lat: 51.51,
+        lng: -0.1,
+        address: "456 Health Ave, London",
+        phone: "+44 20 7654 3210",
+        website: "www.metro-med.org",
+        emergency: true,
+        trauma: true,
+        specialties: ["Trauma", "Neurology", "Oncology"],
+        rating: 4.5,
+        distance: 2.3
+      },
+      {
+        name: "Community Health Clinic",
+        lat: 51.495,
+        lng: -0.085,
+        address: "789 Wellness St, London",
+        phone: "+44 20 7890 1234",
+        website: "www.communityhealthclinic.co.uk",
+        emergency: false,
+        trauma: false,
+        specialties: ["Family Medicine", "Pediatrics"],
+        rating: 3.9,
+        distance: 0.8
+      },
+      {
+        name: "Royal Children's Hospital",
+        lat: 51.515,
+        lng: -0.095,
+        address: "101 Pediatric Way, London",
+        phone: "+44 20 3456 7890",
+        website: "www.royalchildrenshospital.org",
+        emergency: true,
+        trauma: false,
+        specialties: ["Pediatrics", "Neonatology"],
+        rating: 4.7,
+        distance: 3.1
+      },
+      {
+        name: "Westside Urgent Care",
+        lat: 51.49,
+        lng: -0.11,
+        address: "202 Emergency Lane, London",
+        phone: "+44 20 6789 0123",
+        website: "www.westsideurgentcare.com",
+        emergency: true,
+        trauma: false,
+        specialties: ["Urgent Care", "General Practice"],
+        rating: 3.8,
+        distance: 4.5
+      }
+    ];
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set up event listeners
+      setupEventListeners();
+      
+      // Try to get user's current location
+      getUserLocation();
+    });
+
+    function setupEventListeners() {
+      // Search on Enter key
+      document.getElementById('search').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          triggerSearch();
+        }
+      });
+      
+      // Debounced search input
+      document.getElementById('search').addEventListener('input', debounce(function() {
+        const query = document.getElementById('search').value.trim();
+        if (query.length > 2) {
+          triggerSearch();
+        }
+      }, 500));
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+
+    function goBack() {
+      // Clear any active routes
+      clearRoute();
+      
+      // Clear markers and results
+      clearMarkers();
+      document.getElementById('resultsList').innerHTML = '';
+      
+      // Reset to user location if available, or default view
+      if (userLocation) {
+        map.setView([userLocation.lat, userLocation.lng], 15);
+        updateSelectedInfo("Ready to search");
+      } else {
+        map.setView([0, 0], 2);
+        updateSelectedInfo("Map reset to default view");
+      }
+    }
+
+    function getUserLocation() {
+      showLoading(true);
+      updateSelectedInfo("Getting your location...");
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            userLocation = { lat: latitude, lng: longitude };
+            map.setView([latitude, longitude], 15);
+            
+            // Add/update marker for user's location
+            if (userLocationMarker) {
+              userLocationMarker.setLatLng([latitude, longitude]);
+            } else {
+              userLocationMarker = L.marker([latitude, longitude], {
+                icon: L.divIcon({
+                  className: 'user-location-marker',
+                  html: '<div style="background-color: #10ac84; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>',
+                  iconSize: [24, 24],
+                  iconAnchor: [12, 12]
+                })
+              }).addTo(map)
+              .bindPopup("<b>Your Location</b>")
+              .openPopup();
+            }
+            
+            updateSelectedInfo("Location found! Search for hospitals nearby.");
+            showLoading(false);
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            handleLocationError(error);
+            showLoading(false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+      } else {
+        updateSelectedInfo("Geolocation is not supported by your browser", true);
+        showLoading(false);
+        // Default to London if geolocation not supported
+        setDefaultLocation();
+      }
+    }
+
+    function handleLocationError(error) {
+      let errorMessage = "Error getting your location";
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = "Location access was denied. Please enable location services.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = "Location information is unavailable.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "The request to get your location timed out.";
+          break;
+      }
+      updateSelectedInfo(errorMessage, true);
+      setDefaultLocation();
+    }
+
+    function setDefaultLocation() {
+      userLocation = { lat: 51.505, lng: -0.09 }; // London coordinates
+      map.setView([51.505, -0.09], 13);
+      userLocationMarker = L.marker([51.505, -0.09]).addTo(map)
+        .bindPopup('Default location: London')
+        .openPopup();
+    }
+
+    function triggerSearch() {
+      const now = Date.now();
+      if (now - lastSearchTime < searchDelay) {
+        updateSelectedInfo("Please wait a moment before searching again");
+        return;
+      }
+      lastSearchTime = now;
+      
+      const query = document.getElementById('search').value.trim();
+      if (query) {
+        searchLocation(query);
+      } else {
+        updateSelectedInfo("Please enter a search term");
+      }
+    }
+
+    function searchHospitals() {
+      document.getElementById('search').value = "Hospital";
+      searchNearbyMedicalFacilities("hospital");
+    }
+
+    function searchClinics() {
+      document.getElementById('search').value = "Clinic";
+      searchNearbyMedicalFacilities("clinic");
+    }
+
+    function searchPharmacies() {
+      document.getElementById('search').value = "Pharmacy";
+      searchNearbyMedicalFacilities("pharmacy");
+    }
+
+    function searchNearbyMedicalFacilities(type) {
+      showLoading(true);
+      updateSelectedInfo(`Searching for nearby ${type}s...`);
+      
+      // Clear previous markers and routing
+      clearMarkers();
+      if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+      }
+      
+      // In a real app, this would be an API call
+      // For demo purposes, we'll use our sample data filtered by type
+      setTimeout(() => {
+        let results = sampleHospitals;
+        
+        // Filter by type
+        if (type === "hospital") {
+          results = results.filter(h => h.name.toLowerCase().includes("hospital") || h.name.toLowerCase().includes("medical center"));
+        } else if (type === "clinic") {
+          results = results.filter(h => h.name.toLowerCase().includes("clinic"));
+        } else if (type === "pharmacy") {
+          results = results.filter(h => h.name.toLowerCase().includes("pharmacy"));
+        }
+        
+        // Apply radius filter
+        const radius = parseFloat(document.getElementById('radius').value);
+        if (userLocation) {
+          results.forEach(h => {
+            h.distance = calculateDistance(
+              userLocation.lat, userLocation.lng,
+              h.lat, h.lng
+            );
+          });
+          results = results.filter(h => h.distance <= radius);
+        }
+        
+        // Apply emergency filter
+        const emergencyFilter = document.getElementById('emergency').value;
+        if (emergencyFilter === "emergency") {
+          results = results.filter(h => h.emergency);
+        } else if (emergencyFilter === "trauma") {
+          results = results.filter(h => h.trauma);
+        }
+        
+        // Sort by distance
+        results.sort((a, b) => a.distance - b.distance);
+        
+        if (results.length > 0) {
+          // Center map on the first result
+          const firstResult = results[0];
+          map.setView([firstResult.lat, firstResult.lng], 13);
+          
+          // Display results
+          displayHospitalResults(results);
+          
+          updateSelectedInfo(`Found ${results.length} ${type}s within ${radius} km`);
+        } else {
+          updateSelectedInfo(`No ${type}s found within ${radius} km`);
+          document.getElementById('resultsList').innerHTML = '';
+        }
+        showLoading(false);
+      }, 800); // Simulate API delay
+    }
+
+    function clearMarkers() {
+      markers.forEach(marker => map.removeLayer(marker));
+      markers = [];
+    }
+
+    function displayHospitalResults(hospitals) {
+      const resultsDiv = document.getElementById('resultsList');
+      resultsDiv.innerHTML = '';
+      
+      hospitals.forEach(hospital => {
+        // Create marker with custom icon
+        const marker = L.marker([hospital.lat, hospital.lng], {
+          icon: L.divIcon({
+            className: 'hospital-marker',
+            html: `<div style="background-color: ${hospital.emergency ? '#e74c3c' : '#4a6bff'}; 
+                  width: 24px; height: 24px; border-radius: 50%; 
+                  border: 3px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);
+                  display: flex; align-items: center; justify-content: center;">
+                  <i class="fas fa-${hospital.emergency ? 'ambulance' : 'hospital'}" 
+                  style="color: white; font-size: 12px;"></i></div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          })
+        }).addTo(map)
+          .bindPopup(`<b>${hospital.name}</b><br>${hospital.address}`);
+        
+        markers.push(marker);
+        
+        // Create result card
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        
+        // Check if this hospital is a favorite
+        const isFavorite = favorites.some(fav => fav.name === hospital.name);
+        
+        card.innerHTML = `
+          <h4>${hospital.name} 
+            ${hospital.emergency ? '<i class="fas fa-bolt emergency-icon" title="Emergency Services"></i>' : ''}
+            ${hospital.trauma ? '<i class="fas fa-plus-circle emergency-icon" title="Trauma Center"></i>' : ''}
+          </h4>
+          <p class="distance">${hospital.distance.toFixed(1)} km away</p>
+          <p><strong>Address:</strong> ${hospital.address}</p>
+          <div class="hospital-meta">
+            <span><i class="fas fa-phone"></i> ${hospital.phone || 'N/A'}</span>
+            <span class="rating">
+              <i class="fas fa-star"></i> ${hospital.rating}
+            </span>
+          </div>
+          <div class="hospital-details" id="details-${hospital.name.replace(/\s+/g, '-')}">
+            <p><strong>Specialties:</strong> ${hospital.specialties.join(', ')}</p>
+            ${hospital.website ? `<p><strong>Website:</strong> <a href="https://${hospital.website}" target="_blank">${hospital.website}</a></p>` : ''}
+            <div class="action-buttons">
+              <button class="directions-btn" onclick="showDirections(${hospital.lat}, ${hospital.lng}, '${hospital.name}')">
+                <i class="fas fa-directions"></i> Directions
+              </button>
+              <button class="favorite-btn ${isFavorite ? 'favorited' : ''}" 
+                onclick="toggleFavorite(this, ${JSON.stringify(hospital).replace(/"/g, '&quot;')})">
+                <i class="fas fa-heart"></i> ${isFavorite ? 'Saved' : 'Save'}
+              </button>
+            </div>
+          </div>
+        `;
+        
+        // Click handler for the card
+        card.addEventListener('click', (e) => {
+          // Don't trigger if clicking on a button or link
+          if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.parentElement.tagName === 'BUTTON') {
+            return;
+          }
+          
+          map.setView([hospital.lat, hospital.lng], 16);
+          marker.openPopup();
+          
+          // Toggle details visibility
+          const detailsId = `details-${hospital.name.replace(/\s+/g, '-')}`;
+          const detailsElement = document.getElementById(detailsId);
+          detailsElement.classList.toggle('active');
+        });
+        
+        resultsDiv.appendChild(card);
+      });
+    }
+
+    function showDirections(lat, lng, name) {
+      if (!userLocation) {
+        alert("Please enable location services to get directions");
+        return;
+      }
+      
+      // Remove previous routing control if exists
+      if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+      }
+
+      // Clear any existing route line
+      if (window.routeLine) {
+        map.removeLayer(window.routeLine);
+      }
+
+      // Create waypoints
+      const startPoint = L.latLng(userLocation.lat, userLocation.lng);
+      const endPoint = L.latLng(lat, lng);
+
+      // Create new routing control with enhanced options
+      routingControl = L.Routing.control({
+        waypoints: [startPoint, endPoint],
+        routeWhileDragging: true,
+        showAlternatives: false,
+        addWaypoints: false,
+        draggableWaypoints: true, // Allow dragging waypoints to adjust route
+        fitSelectedRoutes: 'smart', // Smarter zoom to fit the route
+        collapsible: true, // Make the control collapsible
+        show: true, // Show the route instructions by default
+        autoRoute: true,
+        lineOptions: {
+          styles: [{color: '#4a6bff', opacity: 0.7, weight: 5}],
+          extendToWaypoints: true,
+          missingRouteTolerance: 1
+        },
+        altLineOptions: {
+          styles: [{color: 'gray', opacity: 0.5, weight: 3}]
+        },
+        createMarker: function(i, waypoint, n) {
+          // Custom markers for start and end points
+          return L.marker(waypoint.latLng, {
+            icon: L.divIcon({
+              className: 'direction-marker',
+              html: i === 0 
+                ? '<div style="background-color:#10ac84;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 0 5px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><i class="fas fa-user" style="color:white;font-size:12px;"></i></div>'
+                : `<div style="background-color:#e74c3c;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 0 5px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><i class="fas fa-${name.toLowerCase().includes('hospital') ? 'hospital' : 'clinic-medical'}" style="color:white;font-size:12px;"></i></div>`,
+              iconSize: [24, 24],
+              iconAnchor: [12, 12]
+            })
+          }).bindPopup(i === 0 ? "Your location" : name);
+        },
+        formatter: new L.Routing.Formatter({
+          language: 'en',
+          units: 'metric',
+          roundingSensitivity: 1
+        })
+      }).addTo(map);
+
+      // Add geocoder control for address lookup
+      L.Control.geocoder({
+        defaultMarkGeocode: false,
+        position: 'topleft',
+        placeholder: 'Search for address...',
+        errorMessage: 'Address not found.'
+      })
+      .on('markgeocode', function(e) {
+        // When an address is found, update the route
+        const newWaypoint = e.geocode.center;
+        routingControl.spliceWaypoints(0, 1, newWaypoint);
+        map.setView(newWaypoint, 15);
+      })
+      .addTo(map);
+
+      // Store the route line reference
+      routingControl.on('routesfound', function(e) {
+        const routes = e.routes;
+        window.routeLine = routes[0].coordinates;
+      });
+
+      updateSelectedInfo(`Showing directions to ${name}. Drag waypoints to adjust route.`);
+    }
+
+    function clearRoute() {
+      if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+      }
+      if (window.routeLine) {
+        map.removeLayer(window.routeLine);
+      }
+      updateSelectedInfo("Route cleared");
+    }
+
+    function toggleFavorite(button, hospital) {
+      const index = favorites.findIndex(fav => fav.name === hospital.name);
+      
+      if (index === -1) {
+        // Add to favorites
+        favorites.push(hospital);
+        button.classList.add('favorited');
+        button.innerHTML = '<i class="fas fa-heart"></i> Saved';
+      } else {
+        // Remove from favorites
+        favorites.splice(index, 1);
+        button.classList.remove('favorited');
+        button.innerHTML = '<i class="fas fa-heart"></i> Save';
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('hospitalFavorites', JSON.stringify(favorites));
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function updateSelectedInfo(text, isError = false) {
+      const infoElement = document.getElementById('selectedInfo');
+      infoElement.textContent = text;
+      infoElement.className = isError ? 'selected-info error-message' : 'selected-info';
+    }
+
+    function showLoading(show) {
+      document.getElementById('loadingIndicator').style.display = show ? 'inline-block' : 'none';
+    }
+  </script>
+</body>
+</html>
